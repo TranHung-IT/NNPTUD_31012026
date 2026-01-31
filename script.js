@@ -3,7 +3,6 @@ let allProducts = [];
 let filteredProducts = [];
 let currentPage = 1;
 let itemsPerPage = 10;
-let currentSortOption = 'default';
 let columnSort = { field: null, order: null }; // Tracking cho sort tại cột
 
 // Sắp xếp tại cột
@@ -23,12 +22,6 @@ function sortByColumn(field) {
         columnSort.field = field;
         columnSort.order = 'asc';
     }
-
-    // Reset dropdown về mặc định
-    currentSortOption = 'default';
-    document.getElementById('sortButtonText').textContent = 'Mặc định';
-    document.querySelectorAll('.sort-option-icon').forEach(icon => icon.textContent = '');
-    document.getElementById('icon-default').textContent = '✓';
 
     // Cập nhật icon cột
     updateColumnSortIcons();

@@ -396,36 +396,6 @@
             <label class="search-label">Tìm kiếm:</label>
             <input type="text" id="searchInput" class="search-input" placeholder="Nhập tên sản phẩm...">
         </div>
-        <div class="sort-container">
-            <label class="sort-label">Sắp xếp:</label>
-            <div class="sort-dropdown">
-                <button class="sort-button" id="sortButton" onclick="toggleSortMenu()">
-                    <span id="sortButtonText">Mặc định</span>
-                </button>
-                <div class="sort-menu" id="sortMenu">
-                    <div class="sort-option" onclick="selectSort('default')">
-                        <span>Mặc định</span>
-                        <span class="sort-option-icon" id="icon-default">✓</span>
-                    </div>
-                    <div class="sort-option" onclick="selectSort('title-asc')">
-                        <span>Tên: A → Z</span>
-                        <span class="sort-option-icon" id="icon-title-asc"></span>
-                    </div>
-                    <div class="sort-option" onclick="selectSort('title-desc')">
-                        <span>Tên: Z → A</span>
-                        <span class="sort-option-icon" id="icon-title-desc"></span>
-                    </div>
-                    <div class="sort-option" onclick="selectSort('price-asc')">
-                        <span>Giá: Thấp → Cao</span>
-                        <span class="sort-option-icon" id="icon-price-asc"></span>
-                    </div>
-                    <div class="sort-option" onclick="selectSort('price-desc')">
-                        <span>Giá: Cao → Thấp</span>
-                        <span class="sort-option-icon" id="icon-price-desc"></span>
-                    </div>
-                </div>
-            </div>
-        </div>
         <div class="items-per-page">
             <label>Hiển thị:</label>
             <select id="itemsPerPage">
