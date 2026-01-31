@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách Sản phẩm</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            background-color: #1863ae;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        /* CSS cho nút sắp xếp */
+        .sortable {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            padding-right: 25px;
+        }
+
+        .sortable:hover {
+            background-color: #145a8f;
+        }
+
+        .sort-icon {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            opacity: 0.5;
+        }
+
+        .sortable.active .sort-icon {
+            opacity: 1;
+        }
+
+        td {
+            padding: 12px;
+            border: 1px solid #ddd;
+        }
+
+        /* CSS cho dòng đen và dòng trắng xen kẽ */
+        tbody tr:nth-child(odd) {
+            background-color: #ffffff; /* Dòng trắng */
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #000000; /* Dòng đen */
+            color: white;
+        }
+
+        tbody tr:hover {
+            opacity: 0.8;
+            cursor: pointer;
+        }
+
+        /* Hiển thị hình ảnh */
+        .product-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 4px;
+            display: block;
+        }
+
+        .price {
+            font-weight: bold;
+            color: #27ae60;
+        }
+
+        tbody tr:nth-child(even) .price {
+            color: #2ecc71;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-size: 18px;
+            color: #666;
+        }
+
+        .error {
+            text-align: center;
+            padding: 20px;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .category {
+            background-color: #3498db;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            display: inline-block;
+        }
+
+        tbody tr:nth-child(even) .category {
+            background-color: #5dade2;
+        }
+
+        .description {
+            max-width: 500px;
+            line-height: 1.4;
+        }
+
+        /* Thiết lập độ rộng cho các cột */
+        th:nth-child(1), td:nth-child(1) { width: 5%; }  /* ID */
+        th:nth-child(2), td:nth-child(2) { width: 15%; } /* Hình ảnh */
+        th:nth-child(3), td:nth-child(3) { width: 45%; } /* Tên sản phẩm */
+        th:nth-child(4), td:nth-child(4) { width: 15%; }  /* Giá */
+        th:nth-child(5), td:nth-child(5) { width: 20%; } /* Danh mục */
+
+        .product-name {
+            max-width: 150px;
+            word-wrap: break-word;
+        }
+
+        /* CSS cho ô tìm kiếm */
+        .search-container {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .search-input {
+            width: 400px;
+            padding: 10px 15px;
+            font-size: 16px;
+            border: 2px solid #3498db;
+            border-radius: 5px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .search-input:focus {
+            border-color: #2980b9;
+        }
+
+        .search-label {
+            font-weight: bold;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+
+        /* CSS cho phân trang */
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding: 15px 0;
+        }
+
+        .pagination-info {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .pagination-button {
+            padding: 8px 15px;
+            border: 1px solid #3498db;
+            background-color: white;
+            color: #3498db;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .pagination-button:hover:not(:disabled) {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .pagination-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-number {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            background-color: white;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .page-number:hover {
+            background-color: #f0f0f0;
+        }
+
+        .page-number.active {
+            background-color: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .items-per-page {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .items-per-page select {
+            padding: 8px 12px;
+            border: 2px solid #3498db;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .items-per-page label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* CSS cho popup sắp xếp */
+        .sort-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .sort-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .sort-button {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s;
+        }
+
+        .sort-button:hover {
+            background-color: #2980b9;
+        }
+
+        .sort-button::after {
+            content: '▼';
+            font-size: 10px;
+        }
+
+        .sort-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: white;
+            min-width: 200px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            border-radius: 5px;
+            z-index: 1000;
+            margin-top: 5px;
+        }
+
+        .sort-menu.show {
+            display: block;
+        }
+
+        .sort-option {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sort-option:last-child {
+            border-bottom: none;
+        }
+
+        .sort-option:hover {
+            background-color: #f5f5f5;
+        }
+
+        .sort-option.active {
+            background-color: #e3f2fd;
+            color: #1976d2;
+            font-weight: bold;
+        }
+
+        .sort-option-icon {
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        .sort-label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* CSS cho tooltip mô tả */
+        .description-tooltip {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            max-width: 400px;
+            z-index: 9999;
+            font-size: 13px;
+            line-height: 1.6;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            word-wrap: break-word;
+        }
+
+        .description-tooltip.show {
+            opacity: 1;
+        }
+
+        .description-tooltip::before {
+            content: 'Mô tả:';
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #ffd700;
+        }
+
+        tbody tr {
+            position: relative;
+        }
+
+        tbody tr:hover .hover-indicator {
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Danh sách Sản phẩm</h1>
+        <div class="search-container">
+            <label class="search-label">Tìm kiếm:</label>
+            <input type="text" id="searchInput" class="search-input" placeholder="Nhập tên sản phẩm...">
+        </div>
+        <div class="sort-container">
+            <label class="sort-label">Sắp xếp:</label>
+            <div class="sort-dropdown">
+                <button class="sort-button" id="sortButton" onclick="toggleSortMenu()">
+                    <span id="sortButtonText">Mặc định</span>
+                </button>
+                <div class="sort-menu" id="sortMenu">
+                    <div class="sort-option" onclick="selectSort('default')">
+                        <span>Mặc định</span>
+                        <span class="sort-option-icon" id="icon-default">✓</span>
+                    </div>
+                    <div class="sort-option" onclick="selectSort('title-asc')">
+                        <span>Tên: A → Z</span>
+                        <span class="sort-option-icon" id="icon-title-asc"></span>
+                    </div>
+                    <div class="sort-option" onclick="selectSort('title-desc')">
+                        <span>Tên: Z → A</span>
+                        <span class="sort-option-icon" id="icon-title-desc"></span>
+                    </div>
+                    <div class="sort-option" onclick="selectSort('price-asc')">
+                        <span>Giá: Thấp → Cao</span>
+                        <span class="sort-option-icon" id="icon-price-asc"></span>
+                    </div>
+                    <div class="sort-option" onclick="selectSort('price-desc')">
+                        <span>Giá: Cao → Thấp</span>
+                        <span class="sort-option-icon" id="icon-price-desc"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="items-per-page">
+            <label>Hiển thị:</label>
+            <select id="itemsPerPage">
+                <option value="5">5 sản phẩm/trang</option>
+                <option value="10" selected>10 sản phẩm/trang</option>
+                <option value="20">20 sản phẩm/trang</option>
+            </select>
+        </div>
+        <div id="loading" class="loading">Đang tải dữ liệu...</div>
+        <div id="error" class="error" style="display: none;"></div>
+        <table id="productTable" style="display: none;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Hình ảnh</th>
+                    <th class="sortable" onclick="sortByColumn('title')" id="sortTitle">
+                        Tên sản phẩm
+                        <span class="sort-icon">↕</span>
+                    </th>
+                    <th class="sortable" onclick="sortByColumn('price')" id="sortPrice">
+                        Giá
+                        <span class="sort-icon">↕</span>
+                    </th>
+                    <th>Danh mục</th>
+                </tr>
+            </thead>
+            <tbody id="productBody">
+            </tbody>
+        </table>
+        <div id="paginationContainer" class="pagination-container" style="display: none;"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
